@@ -9,11 +9,23 @@ class OSCSender:
     def __init__(self, osc_config: OSCConfig) -> None:
         self.client: udp_client.SimpleUDPClient = udp_client.SimpleUDPClient(osc_config.host, osc_config.port)
 
+    def __init__(self, osc_config: OSCConfig) -> None:
+        self.client: udp_client.SimpleUDPClient = udp_client.SimpleUDPClient(osc_config.host, osc_config.port)
+        self.cell_names = [
+            "one", "two", "three", "four",
+            "five", "six", "seven", "eight",
+            "nine", "ten", "eleven", "twelve",
+            "thirteen", "fourteen", "fifteen", "sixteen"
+        ]
+
     def send_grid_data(self, cells: List[CellData]) -> None:
         bundle: OscBundleBuilder = OscBundleBuilder(0)
 
         for cell in cells:
-            address: str = f"/cell/{cell.row}/{cell.col}"
+            # Calcula el índice basado en la posición de la celda (0-15)
+            cell_index = cell.row * 4 + cell.col
+            cell_name = self.cell_names[cell_index]
+            address: str = f"/cell/{cell_name}"
 
             rgb_builder: OscMessageBuilder = OscMessageBuilder(address=f"{address}/rgb")
             rgb_builder.add_arg(cell.avg_red)
